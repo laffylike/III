@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화학 퀴즈 게임</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        #quiz-container {
+            display: none;
+        }
+
+        #question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        #answer {
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #submit-answer {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+
+        #feedback {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #start-game {
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+
+        #score {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        #name-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #name {
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #submit-name {
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+
+        #ratings {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #ratings h3 {
+            margin: 0 0 10px;
+        }
+
+        #ratings ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #ratings li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background" id="background1"></div>
+    <div class="background" id="background2"></div>
+    <div class="background" id="background3"></div>
+    <div class="background" id="background4"></div>
+    <div class="background" id="background5"></div>
+    <div class="background" id="background6"></div>
+    <div class="background" id="background7"></div>
+    <div class="background" id="background8"></div>
+    <div class="background" id="background9"></div>
+    <div class="background" id="background10"></div>
+    <div class="background" id="background11"></div>
+    <div class="background" id="background12"></div>
+    <div class="background" id="background13"></div>
+    <div class="background" id="background14"></div>
+    <div class="background" id="background15"></div>
+    <div class="background" id="background16"></div>
+    <div class="background" id="background17"></div>
+    <div class="background" id="background18"></div>
+    <div class="background" id="background19"></div>
+    <div class="background" id="background20"></div>
+
+    <div class="container">
+        <h1>화학 퀴즈 게임</h1>
+        <div id="quiz-container">
+            <div id="question-container">
+                <p id="question"></p>
+            </div>
+            <input type="text" id="answer" placeholder="정답을 입력하세요">
+            <button id="submit-answer">제출</button>
+            <p id="feedback"></p>
+            <p id="timer">남은 시간: 180초</p>
+        </div>
+        <button id="start-game">게임 시작</button>
+        <div id="name-section">
+            <input type="text" id="name" placeholder="이름을 입력하세요">
+            <button id="submit-name">저장</button>
+        </div>
+        <p id="score"></p>
+    </div>
+
+    <div id="ratings">
+        <h3>순위</h3>
+        <ul id="rating-list"></ul>
+    </div>
+
+    <script>
+        const images = [
+            'file:///C:/Users/doyun/Downloads/Designer.jpeg', 'file:///C:/Users/doyun/Downloads/Designer (1).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (2).jpeg', 
+            'file:///C:/Users/doyun/Downloads/Designer (3).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (4).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (5).jpeg', 
+            'file:///C:/Users/doyun/Downloads/Designer (6).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (7).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (8).jpeg', 
+            'file:///C:/Users/doyun/Downloads/Designer (9).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (10).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (11).jpeg', 
+            'file:///C:/Users/doyun/Downloads/Designer (12).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (13).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (14).jpeg', 
+            'file:///C:/Users/doyun/Downloads/Designer (15).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (16).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (17).jpeg', 
+            'file:///C:/Users/doyun/Downloads/Designer (18).jpeg', 'file:///C:/Users/doyun/Downloads/Designer (19).jpeg'
+        ];
+
+        let currentImageIndex = 0;
+        const backgrounds = document.querySelectorAll('.background');
+
+        // 수정된 부분: 랜덤한 시간 간격으로 배경을 변경하는 기능 추가
+        function getRandomTime() {
+            return Math.floor(Math.random() * 5000) + 2000; // 2초에서 7초 사이의 랜덤 시간
+        }
+
+        function changeBackground() {
+            backgrounds.forEach((bg, index) => {
+                if (index === currentImageIndex) {
+                    bg.style.opacity = 1;
+                    bg.style.backgroundImage = `url(${images[index]})`;
+                } else {
+                    bg.style.opacity = 0;
+                }
+            });
+
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            setTimeout(changeBackground, getRandomTime());
+        }
+
+        changeBackground();
+
+        const quizData = [
+            { question: "물의 화학식은?", answer: "H2O" },
+            { question: "이산화탄소의 화학식은?", answer: "CO2" },
+            { question: "염화나트륨의 화학식은?", answer: "NaCl" },
+            { question: "산소의 원소 기호는?", answer: "O" },
+            { question: "수소의 원소 기호는?", answer: "H" },
+            { question: "질소의 원소 기호는?", answer: "N" },
+            { question: "황의 원소 기호는?", answer: "S" },
+            { question: "헬륨의 원소 기호는?", answer: "He" },
+            { question: "칼륨의 원소 기호는?", answer: "K" },
+            { question: "칼슘의 원소 기호는?", answer: "Ca" },
+            { question: "황산의 화학식은?", answer: "H2SO4" },
+            { question: "암모니아의 화학식은?", answer: "NH3" },
+            { question: "메탄의 화학식은?", answer: "CH4" },
+            { question: "에탄올의 화학식은?", answer: "C2H5OH" },
+            { question: "포도당의 화학식은?", answer: "C6H12O6" },
+            { question: "나트륨의 원소 기호는?", answer: "Na" },
+            { question: "염소의 원소 기호는?", answer: "Cl" },
+            { question: "철의 원소 기호는?", answer: "Fe" },
+            { question: "구리의 원소 기호는?", answer: "Cu" },
+            { question: "알루미늄의 원소 기호는?", answer: "Al" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalTime = 180;
+        let timerInterval;
+        let gameFinished = false;
+
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const startGameButton = document.getElementById('start-game');
+        const submitAnswerButton = document.getElementById('submit-answer');
+        const scoreElement = document.getElementById('score');
+        const nameSection = document.getElementById('name-section');
+        const nameInput = document.getElementById('name');
+        const submitNameButton = document.getElementById('submit-name');
+        const ratingList = document.getElementById('rating-list');
+        const quizContainer = document.getElementById('quiz-container');
+
+        startGameButton.addEventListener('click', startGame);
+        submitAnswerButton.addEventListener('click', checkAnswer);
+
+        // 수정된 부분: Enter 키로 제출하는 기능 추가
+        answerElement.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        submitNameButton.addEventListener('click', saveRating);
+
+        function startGame() {
+            startGameButton.style.display = 'none';
+            quizContainer.style.display = 'block';
+            currentQuestionIndex = 0;
+            score = 0;
+            totalTime = 180;
+            gameFinished = false;
+            startTimer();
+            showNextQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                totalTime--;
+                updateTimer();
+                if (totalTime <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            timerElement.textContent = `남은 시간: ${totalTime}초`;
+        }
+
+        function showNextQuestion() {
+            if (currentQuestionIndex >= quizData.length) {
+                endGame();
+                return;
+            }
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            answerElement.value = '';
+            feedbackElement.textContent = '';
+        }
+
+        function checkAnswer() {
+            const userAnswer = answerElement.value.trim().toLowerCase();
+            const correctAnswer = quizData[currentQuestionIndex].answer.toLowerCase();
+            if (userAnswer === correctAnswer) {
+                score++;
+                feedbackElement.textContent = "정답입니다!";
+            } else {
+                feedbackElement.textContent = `틀렸습니다. 정답은 ${quizData[currentQuestionIndex].answer}입니다.`;
+            }
+            currentQuestionIndex++;
+            if (!gameFinished) {
+                setTimeout(showNextQuestion, 1000);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            gameFinished = true;
+            questionElement.textContent = "게임 끝!";
+            feedbackElement.textContent = `최종 점수: ${score}점`;
+            quizContainer.style.display = 'none';
+            nameSection.style.display = 'block';
+        }
+
+        function saveRating() {
+            const playerName = nameInput.value.trim();
+            if (playerName !== "") {
+                const newRating = document.createElement('li');
+                newRating.textContent = `${playerName} - 점수: ${score}, 시간: ${180 - totalTime}초`;
+                ratingList.appendChild(newRating);
+                nameSection.style.display = 'none';
+                startGameButton.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
